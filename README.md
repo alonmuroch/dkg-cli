@@ -1,6 +1,7 @@
-# DKG-Cli - An SSV DKG cli tool over any communication channel
+# DKG-Cli
 
-This tool is a **WORK IN PROGRESS!**  
+This tool is a **WORK IN PROGRESS!**, do not use in production!  
+
 DKG-cli enables conducting a DKG ceremony for [ssv.network](https://ssv.network) over any communication channel (email, telegram, web, discord, etc).
 
 ## How it works
