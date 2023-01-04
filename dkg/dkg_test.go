@@ -1,7 +1,6 @@
 package dkg
 
 import (
-	"crypto/rsa"
 	"encoding/hex"
 	"fmt"
 	"github.com/drand/kyber/share/dkg"
@@ -18,17 +17,13 @@ const (
 	T = 3
 )
 
-var TestNodesEncryptionKeys = func() []*rsa.PublicKey {
+var TestNodesEncryptionKeys = func() [][]byte {
 	_, pk1Byts, _ := GenerateKey()
-	pk1, _ := PemToPublicKey(pk1Byts)
 	_, pk2Byts, _ := GenerateKey()
-	pk2, _ := PemToPublicKey(pk2Byts)
 	_, pk3Byts, _ := GenerateKey()
-	pk3, _ := PemToPublicKey(pk3Byts)
 	_, pk4Byts, _ := GenerateKey()
-	pk4, _ := PemToPublicKey(pk4Byts)
 
-	return []*rsa.PublicKey{pk1, pk2, pk3, pk4}
+	return [][]byte{pk1Byts, pk2Byts, pk3Byts, pk4Byts}
 }()
 
 var TestNodes = func() []*Node {
@@ -49,19 +44,19 @@ var TestDrandNodes = func() []dkg.Node {
 	return []dkg.Node{
 		{
 			Index:  1,
-			Public: TestNodes[0].ecies.Pub,
+			Public: TestNodes[0].Ecies.GetPublicKey(),
 		},
 		{
 			Index:  2,
-			Public: TestNodes[1].ecies.Pub,
+			Public: TestNodes[1].Ecies.GetPublicKey(),
 		},
 		{
 			Index:  3,
-			Public: TestNodes[2].ecies.Pub,
+			Public: TestNodes[2].Ecies.GetPublicKey(),
 		},
 		{
 			Index:  4,
-			Public: TestNodes[3].ecies.Pub,
+			Public: TestNodes[3].Ecies.GetPublicKey(),
 		},
 	}
 }()
@@ -140,7 +135,7 @@ func TestDKGFull(t *testing.T) {
 	for i, res := range results {
 		sk, err := resultToShareSecretKey(res)
 		require.NoError(t, err)
-		TestNodes[i].GenerateShare = sk
+		TestNodes[i].generatedShare = sk.Serialize()
 		fmt.Printf("Index (%d): %x\n", i+1, sk.Serialize())
 		sks = append(sks, *sk)
 	}
@@ -170,7 +165,7 @@ func TestDKGFull(t *testing.T) {
 	require.NoError(t, err)
 	var depositPartialSigs []*bls3.Sign
 	for _, n := range TestNodes {
-		depositPartialSigs = append(depositPartialSigs, n.GenerateShare.SignByte(root))
+		depositPartialSigs = append(depositPartialSigs, n.GetGenerateShare().SignByte(root))
 	}
 
 	// reconstruct deposit sig and verify
@@ -189,7 +184,7 @@ func TestDKGFull(t *testing.T) {
 		output = append(output, &Output{
 			Nonce:                       nonce,
 			EncryptedShare:              encryptedShares[i],
-			SharePK:                     TestNodes[i].GenerateShare.GetPublicKey().Serialize(),
+			SharePK:                     TestNodes[i].GetGenerateShare().GetPublicKey().Serialize(),
 			ValidatorPK:                 valPK.Serialize(),
 			DepositDataPartialSignature: depositPartialSigs[i].Serialize(),
 		})

@@ -22,16 +22,43 @@ var Suite = bls3.NewBLS12381Suite()
 var AuthScheme = bls2.NewSchemeOnG1(Suite)
 
 type ECIES struct {
-	Priv kyber.Scalar
-	Pub  kyber.Point
+	Pub   []byte
+	priv  []byte
+	suite dkg.Suite
 }
 
 func NewRandomECIES(s dkg.Suite) *ECIES {
 	private := s.Scalar().Pick(random.New())
-	return &ECIES{
-		Priv: private,
-		Pub:  s.Point().Mul(private, nil),
+	pkByts, err := private.MarshalBinary()
+	if err != nil {
+		panic(err.Error())
 	}
+	pubByts, err := s.Point().Mul(private, nil).MarshalBinary()
+	if err != nil {
+		panic(err.Error())
+	}
+
+	return &ECIES{
+		suite: s,
+		priv:  pkByts,
+		Pub:   pubByts,
+	}
+}
+
+func (e *ECIES) GetPublicKey() kyber.Point {
+	ret := e.suite.Point()
+	if err := ret.UnmarshalBinary(e.Pub); err != nil {
+		panic(err.Error())
+	}
+	return ret
+}
+
+func (e *ECIES) GetPrivateKey() kyber.Scalar {
+	ret := e.suite.Scalar()
+	if err := ret.UnmarshalBinary(e.priv); err != nil {
+		panic(err.Error())
+	}
+	return ret
 }
 
 // NonceLength is the length of the nonce

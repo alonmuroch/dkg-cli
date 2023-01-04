@@ -8,23 +8,25 @@ import (
 )
 
 type Node struct {
-	Index         uint32
-	drand         *dkg.DistKeyGenerator
-	ecies         *ECIES
-	EncryptionPK  *rsa.PublicKey
-	GenerateShare *bls.SecretKey
+	Index        uint32
+	Ecies        *ECIES
+	EncryptionPK []byte
+
+	generatedShare []byte
+
+	drand *dkg.DistKeyGenerator
 }
 
-func NewNode(index uint32, s dkg.Suite, pk *rsa.PublicKey) *Node {
+func NewNode(index uint32, s dkg.Suite, pk []byte) *Node {
 	return &Node{
 		Index:        index,
-		ecies:        NewRandomECIES(s),
+		Ecies:        NewRandomECIES(s),
 		EncryptionPK: pk,
 	}
 }
 
 func (n *Node) SetupDrandWithConfig(c *dkg.Config) error {
-	c.Longterm = n.ecies.Priv
+	c.Longterm = n.Ecies.GetPrivateKey()
 	drand, err := dkg.NewDistKeyHandler(c)
 	if err != nil {
 		errors.Wrap(err, "could not generate drand DKG")
@@ -33,6 +35,26 @@ func (n *Node) SetupDrandWithConfig(c *dkg.Config) error {
 	return nil
 }
 
+func (n *Node) getEncryptionPK() *rsa.PublicKey {
+	encryptionPK, err := PemToPublicKey(n.EncryptionPK)
+	if err != nil {
+		panic(err.Error())
+	}
+	return encryptionPK
+}
+
+func (n *Node) DidSetGeneratedShare() bool {
+	return len(n.generatedShare) > 0
+}
+
+func (n *Node) GetGenerateShare() *bls.SecretKey {
+	ret := &bls.SecretKey{}
+	if err := ret.Deserialize(n.generatedShare); err != nil {
+		panic(err.Error())
+	}
+	return ret
+}
+
 func (n *Node) EncryptShare() ([]byte, error) {
-	return Encrypt(n.EncryptionPK, n.GenerateShare.Serialize())
+	return Encrypt(n.getEncryptionPK(), n.generatedShare)
 }
