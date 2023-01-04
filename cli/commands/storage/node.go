@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"fmt"
 	"github.com/bloxapp/dkg/dkg"
 	"path/filepath"
 )
@@ -15,6 +16,6 @@ func SaveNodeToDisk(node *dkg.Node, basePath string, password string) error {
 		return err
 	}
 
-	path := filepath.Join(basePath, NodeFilename)
+	path := filepath.Join(basePath, fmt.Sprintf("%s_%d", NodeFilename, node.Index))
 	return SaveJson(path, node)
 }
