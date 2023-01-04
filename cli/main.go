@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/bloxapp/dkg/cli/commands"
-	"github.com/bloxapp/dkg/utils"
+	"github.com/alonmuroch/dkg-cli/cli/commands"
+	"github.com/alonmuroch/dkg-cli/utils"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )

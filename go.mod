@@ -1,4 +1,4 @@
-module github.com/bloxapp/dkg
+module github.com/alonmuroch/dkg-cli
 
 go 1.17
 

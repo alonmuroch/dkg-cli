@@ -2,9 +2,9 @@ package commands
 
 import (
 	"encoding/base64"
-	"github.com/bloxapp/dkg/cli/commands/storage"
-	dkg2 "github.com/bloxapp/dkg/dkg"
-	"github.com/bloxapp/dkg/utils"
+	"github.com/alonmuroch/dkg-cli/cli/commands/storage"
+	dkg2 "github.com/alonmuroch/dkg-cli/dkg"
+	"github.com/alonmuroch/dkg-cli/utils"
 	kyber "github.com/drand/kyber/share/dkg"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"

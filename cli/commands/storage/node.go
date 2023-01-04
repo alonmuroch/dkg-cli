@@ -3,7 +3,7 @@ package storage
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/bloxapp/dkg/dkg"
+	"github.com/alonmuroch/dkg-cli/dkg"
 	"os"
 	"path/filepath"
 )

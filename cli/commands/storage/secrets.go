@@ -2,7 +2,7 @@ package storage
 
 import (
 	"encoding/json"
-	"github.com/bloxapp/dkg/dkg"
+	"github.com/alonmuroch/dkg-cli/dkg"
 	"github.com/pkg/errors"
 	"path/filepath"
 )

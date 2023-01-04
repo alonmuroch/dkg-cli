@@ -1,7 +1,7 @@
 package commands
 
 import (
-	dkg2 "github.com/bloxapp/dkg/dkg"
+	dkg2 "github.com/alonmuroch/dkg-cli/dkg"
 	"github.com/drand/kyber/share/dkg"
 	"github.com/spf13/cobra"
 )
