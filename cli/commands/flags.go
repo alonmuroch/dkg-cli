@@ -4,10 +4,13 @@ import "github.com/spf13/cobra"
 
 const (
 	OutputFolder = "output"
+	NodesFolder  = "node-folder"
 
 	OperatorIDFlag            = "operator-id"
 	OperatorEncryptionKeyFlag = "encryption-pk"
 	PasswordFlag              = "password"
+	NonceFlag                 = "nonce"
+	DKGConfigFlag             = "dkg-config"
 )
 
 func setOperatorIDFlag(cmd *cobra.Command) {
@@ -25,7 +28,22 @@ func setOutputFlag(cmd *cobra.Command) {
 	cmd.MarkPersistentFlagRequired(OutputFolder)
 }
 
+func setNodesFolderFlag(cmd *cobra.Command) {
+	cmd.PersistentFlags().String(NodesFolder, "", "set nodes folder")
+	cmd.MarkPersistentFlagRequired(NodesFolder)
+}
+
 func setPasswordFlag(cmd *cobra.Command) {
 	cmd.PersistentFlags().String(PasswordFlag, "", "set secret encryption password")
 	cmd.MarkPersistentFlagRequired(PasswordFlag)
+}
+
+func setNonceFlag(cmd *cobra.Command) {
+	cmd.PersistentFlags().String(NonceFlag, "", "set dkg session nonce")
+	cmd.MarkPersistentFlagRequired(NonceFlag)
+}
+
+func setDKGConfigFlag(cmd *cobra.Command) {
+	cmd.PersistentFlags().IntSlice(DKGConfigFlag, []int{}, "set dkg config params (N,T)")
+	cmd.MarkPersistentFlagRequired(DKGConfigFlag)
 }

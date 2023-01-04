@@ -7,10 +7,16 @@ import (
 	"github.com/pkg/errors"
 )
 
+type Config struct {
+	N, T int
+}
+
 type Node struct {
 	Index        uint32
 	Ecies        *ECIES
 	EncryptionPK []byte
+	Nonce        string
+	N, T         int
 
 	generatedShare []byte
 

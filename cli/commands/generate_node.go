@@ -33,6 +33,19 @@ var generateNodeCommand = &cobra.Command{
 			panic(err.Error())
 		}
 
+		nonce, err := cmd.Flags().GetString(NonceFlag)
+		if err != nil {
+			panic(err.Error())
+		}
+
+		dkgConfig, err := cmd.Flags().GetIntSlice(DKGConfigFlag)
+		if err != nil {
+			panic(err.Error())
+		}
+		if len(dkgConfig) != 2 {
+			panic("dkg config has to have 2 values")
+		}
+
 		operatorID, err := cmd.Flags().GetInt(OperatorIDFlag)
 		if err != nil {
 			panic(err.Error())
@@ -49,6 +62,9 @@ var generateNodeCommand = &cobra.Command{
 		}
 
 		node := dkg2.NewNode(uint32(operatorID), dkg2.Suite.G1().(kyber.Suite), byts)
+		node.Nonce = nonce
+		node.N = dkgConfig[0]
+		node.T = dkgConfig[1]
 
 		// save secrets
 		if err := storage.SaveNodeToDisk(node, outputPath, password); err != nil {
@@ -65,4 +81,6 @@ func initGenerateNodeCmd() {
 	setOperatorEncryptionKeyFlag(generateNodeCommand)
 	setOutputFlag(generateNodeCommand)
 	setPasswordFlag(generateNodeCommand)
+	setNonceFlag(generateNodeCommand)
+	setDKGConfigFlag(generateNodeCommand)
 }
